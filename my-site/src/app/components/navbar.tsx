@@ -51,7 +51,7 @@ export const Navbar: React.FC = () => {
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden sm:flex gap-9" justify="center">
         {menuItems.map((item) => (
           <NavbarItem key={item.path} isActive={isActive(item.path)}>
             <Link 

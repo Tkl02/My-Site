@@ -12,7 +12,7 @@ import profilephoto from "../assets/imgs/profile.png";
 
 export const Home: React.FC = () => {
   return (
-    <div className="min-h-[calc(100vh-64px)] flex flex-col">
+    <div className="min-h-[calc(100vh-100vw)] flex flex-col">
       <section className="flex-grow flex items-center">
         <div className="section-container flex flex-col md:flex-row items-center justify-between gap-12">
           <motion.div
@@ -61,7 +61,7 @@ export const Home: React.FC = () => {
 
             <Spacer y={12} />
 
-            <div className="flex flex-wrap gap-8 items-center bg-primary-100 rounded-3xl">
+            <div className="flex flex-wrap gap-8 items-center bg-primary-100 rounded-3xl dark:bg-primary-900/15">
               <p className="text-default-600 font-medium ml-6">Minha Stack</p>
               <div className="flex flex-wrap gap-5 items-center">
                 <motion.div
