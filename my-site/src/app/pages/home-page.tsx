@@ -9,18 +9,14 @@ import react from "../assets/icons/react.gif";
 import typescript from "../assets/icons/typescript.gif";
 import java from "../assets/icons/java.gif";
 import profilephoto from "../assets/imgs/profile.png";
+import { fadeIn } from "../config/animation/motion-animate";
 
 export const Home: React.FC = () => {
   return (
     <div className="min-h-[calc(100vh-100vw)] flex flex-col">
       <section className="flex-grow flex items-center">
         <div className="section-container flex flex-col md:flex-row items-center justify-between gap-12">
-          <motion.div
-            className="flex-1 max-w-2xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+          <motion.div className="flex-1 max-w-2xl" {...fadeIn(20)}>
             <div className="mb-4 inline-block bg-primary-100 dark:bg-primary-900/15 text-primary px-3 py-1 rounded-full text-sm font-medium">
               Security Information Analyst
             </div>
@@ -65,9 +61,7 @@ export const Home: React.FC = () => {
               <p className="text-default-600 font-medium ml-6">Minha Stack</p>
               <div className="flex flex-wrap gap-5 items-center">
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1 }}
+                  {...fadeIn(10)}
                   className="flex items-center justify-center"
                 >
                   <img src={sec} alt="gif" className="w-14 h-14" />
@@ -80,12 +74,7 @@ export const Home: React.FC = () => {
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            className="flex flex-1 justify-center"
-          >
+          <motion.div {...fadeIn(10)} className="flex flex-1 justify-center">
             <div className="relative w-72 h-72 md:w-100 md:h-100 ml-6">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 opacity-20 blur-3xl z-0"></div>
               <div className="absolute inset-0 flex items-center justify-center z-10">

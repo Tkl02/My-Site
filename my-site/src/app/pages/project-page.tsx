@@ -3,7 +3,7 @@ import { Card, CardBody, CardFooter, Chip, button, Link } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import { Project } from "../config/types/interface";
-import { P } from "framer-motion/dist/types.d-Cjd591yU";
+import { fadeIn } from "../config/animation/motion-animate";
 
 const imageteste = "../assets/imgs/profile.png";
 
@@ -104,11 +104,7 @@ export const Projects: React.FC = () => {
 
   return (
     <div className="section-container">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      ></motion.div>
+      <motion.div {...fadeIn(20)}></motion.div>
     </div>
   );
 };

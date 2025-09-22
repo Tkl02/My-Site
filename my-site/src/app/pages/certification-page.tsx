@@ -3,7 +3,7 @@ import { Card, CardBody, Chip, Divider } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { motion, stagger } from "framer-motion";
 import { Certification } from "../config/types/interface";
-
+import { fadeIn } from "../config/animation/motion-animate";
 
 export const CertificationsPage: React.FC = () => {
   const certification: Certification[] = [
@@ -17,7 +17,7 @@ export const CertificationsPage: React.FC = () => {
       logo: "logos:udemy-icon",
     },
     {
-      id: 1,
+      id: 2,
       title: "introduction on the cloud",
       issues: "aws",
       date: "02 june 2025",
@@ -26,7 +26,7 @@ export const CertificationsPage: React.FC = () => {
       logo: "logos:aws",
     },
     {
-      id: 1,
+      id: 3,
       title: "introduction on the security",
       issues: "Coursera",
       date: "02 june 2025",
@@ -53,11 +53,7 @@ export const CertificationsPage: React.FC = () => {
 
   return (
     <div className="section-container">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <motion.div {...fadeIn(20)}>
         <h1 className="section-title">Certifications</h1>
         <p className="text-default-600 text-lg max-w-3xl mb-12">
           Certificações profissionais e cursos que concluí para aprimorar minhas
@@ -83,19 +79,32 @@ export const CertificationsPage: React.FC = () => {
                   </div>
                   <div className="flex-1">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
-                      <h3 className="text-xl font-semibold text-foreground">{cert.title}</h3>
-                      <Chip color="primary" variant="flat" size="sm">{cert.date}</Chip>
+                      <h3 className="text-xl font-semibold text-foreground">
+                        {cert.title}
+                      </h3>
+                      <Chip color="primary" variant="flat" size="sm">
+                        {cert.date}
+                      </Chip>
                     </div>
-                      <p className="text-default-600 mb-3">{cert.issues}</p>
-                      <p className="text-small text-default-500 mb-4">Credential: {cert.credentialId}</p>
+                    <p className="text-default-600 mb-3">{cert.issues}</p>
+                    <p className="text-small text-default-500 mb-4">
+                      Credential: {cert.credentialId}
+                    </p>
 
-                      <Divider className="my-3"/>
+                    <Divider className="my-3" />
 
-                      <div className="flex flex-wrap gap-2 mt-3">
-                        {cert.skills.map((skill) => (
-                          <Chip key={skill} variant="flat" size="sm" className="text-xs dark:bg-primary-100">{skill}</Chip>
-                        ))}
-                      </div>
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {cert.skills.map((skill) => (
+                        <Chip
+                          key={skill}
+                          variant="flat"
+                          size="sm"
+                          className="text-xs dark:bg-primary-100"
+                        >
+                          {skill}
+                        </Chip>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </CardBody>
