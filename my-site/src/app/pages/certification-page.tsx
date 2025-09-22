@@ -2,16 +2,8 @@ import React from "react";
 import { Card, CardBody, Chip, Divider } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { motion, stagger } from "framer-motion";
+import { Certification } from "../config/types/interface";
 
-interface Certification {
-  id: number;
-  title: string;
-  issues: string;
-  date: string;
-  credentialId: string;
-  skills: string[];
-  logo: string;
-}
 
 export const CertificationsPage: React.FC = () => {
   const certification: Certification[] = [
