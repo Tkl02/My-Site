@@ -48,7 +48,7 @@ export const Home: React.FC = () => {
               </Button>
               <Button
                 as={Link}
-                to="/contacts"
+                to="/contact"
                 variant="bordered"
                 color="primary"
                 size="lg"
