@@ -2,39 +2,10 @@ import React from "react";
 import { Card, CardBody, Chip, Divider } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { motion, stagger } from "framer-motion";
-import { Certification } from "../config/types/interface";
 import { fadeIn } from "../config/animation/motion-animate";
+import { certification } from "../config/types/dataMok";
 
 export const CertificationsPage: React.FC = () => {
-  const certification: Certification[] = [
-    {
-      id: 1,
-      title: "introduction on the react",
-      issues: "Udemy",
-      date: "02 june 2025",
-      credentialId: "https://udemy.com/dfjhlkjdshf",
-      skills: ["react", "node", "mongo", "heroui"],
-      logo: "logos:udemy-icon",
-    },
-    {
-      id: 2,
-      title: "introduction on the cloud",
-      issues: "aws",
-      date: "02 june 2025",
-      credentialId: "https://udemy.com/dfjhlkjdshf",
-      skills: ["react", "node", "mongo", "heroui"],
-      logo: "logos:aws",
-    },
-    {
-      id: 3,
-      title: "introduction on the security",
-      issues: "Coursera",
-      date: "02 june 2025",
-      credentialId: "https://udemy.com/dfjhlkjdshf",
-      skills: ["react", "node", "mongo", "heroui"],
-      logo: "logos:coursera",
-    },
-  ];
 
   const container = {
     hidden: { opacity: 0 },

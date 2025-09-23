@@ -1,5 +1,3 @@
-import React from "react";
-
 export interface Project{
     id: number;
     title: string;
@@ -17,5 +15,27 @@ export interface Certification {
   date: string;
   credentialId: string;
   skills: string[];
+  logo: string;
+}
+
+export interface Education{
+  id: number;
+  instituition: string;
+  degree: string;
+  field: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  logo: string;
+}
+
+export interface Career{
+  id: number;
+  company: string;
+  position: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  technologies: string;
   logo: string;
 }
