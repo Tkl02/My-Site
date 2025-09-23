@@ -6,7 +6,6 @@ export interface Project{
     description: string;
     image: string;
     technologies: string[];
-    demoUrl: string;
     repoUrl: string;
     featured: boolean;
 }
