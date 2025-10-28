@@ -4,24 +4,9 @@ import { Icon } from "@iconify/react";
 import { motion, stagger } from "framer-motion";
 import { fadeIn } from "../config/animation/motion-animate";
 import { certification } from "../config/types/dataMok";
+import { container, item } from "../config/animation/motion-animate";
 
 export const CertificationsPage: React.FC = () => {
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const items = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-  };
-
   return (
     <div className="section-container">
       <motion.div {...fadeIn(20)}>
@@ -39,7 +24,7 @@ export const CertificationsPage: React.FC = () => {
         animate="show"
       >
         {certification.map((cert) => (
-          <motion.div key={cert.id} variants={items}>
+          <motion.div key={cert.id} variants={item}>
             <Card className="card-hover dark:bg-gray-800">
               <CardBody className="p-6">
                 <div className="flex flex-col md:flex-row gap-6">

@@ -1,11 +1,11 @@
-export interface Project{
-    id: number;
-    title: string;
-    description: string;
-    image: string;
-    technologies: string[];
-    repoUrl: string;
-    featured: boolean;
+export interface Project {
+  id: number;
+  title: string;
+  description: string;
+  image: string;
+  technologies: string[];
+  repoUrl: string;
+  featured: boolean;
 }
 
 export interface Certification {
@@ -18,9 +18,9 @@ export interface Certification {
   logo: string;
 }
 
-export interface Education{
+export interface Education {
   id: number;
-  instituition: string;
+  institution: string;
   degree: string;
   field: string;
   startDate: string;
@@ -29,13 +29,20 @@ export interface Education{
   logo: string;
 }
 
-export interface Career{
+export interface Career {
   id: number;
   company: string;
   position: string;
   startDate: string;
-  endDate: string;
-  description: string;
-  technologies: string;
+  endDate: string | null;
+  description?: string;
+  technologies: string[];
   logo: string;
+  responsibilities: string[];
+}
+
+export interface SkillCategoryProps {
+  title: string;
+  skills: string[];
+  icon: string;
 }
