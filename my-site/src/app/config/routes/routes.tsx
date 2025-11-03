@@ -5,7 +5,7 @@ import { Contact } from "../../pages/contact-page";
 import { Home } from "../../pages/home-page";
 import { Projects } from "../../pages/project-page";
 import { CertificationsPage } from "../../pages/certification-page";
-import { Auth } from "../../pages/login-page";
+import { Auth } from "../../auth/page/login-page";
 import { Dashboard } from "../../auth/page/dashboard-page";
 
 export const Rotas: React.FC = () => {
