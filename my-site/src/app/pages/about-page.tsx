@@ -1,7 +1,6 @@
 import React from "react";
-import { Education, Career } from "../config/types/interface";
 import { fadeIn, container, item } from "../config/animation/motion-animate";
-import { delay, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Avatar, Card, CardBody, Divider, Tab, Tabs } from "@heroui/react";
 import profilephoto from "../assets/imgs/profile.png";
 import { Icon } from "@iconify/react";
@@ -17,13 +16,13 @@ export const About: React.FC = () => {
       <motion.div {...fadeIn(-20)}>
         <h1 className="section-title">Sobre Mim</h1>
       </motion.div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+      <div className="grid grid-cols-1 gap-8 mb-12 lg:grid-cols-3">
         <motion.div {...fadeIn(-20)} transition={{ delay: 0.2 }}>
           <div className="sticky top-20">
             <div className="flex flex-col items-center mb-6">
               <Avatar
                 src={profilephoto}
-                className="w-40 h-40 text-large mb-4"
+                className="w-40 h-40 mb-4 text-large"
               />
               <h2 className="text-2xl font-bold">Leonardo Faustino</h2>
               <p className="text-default-600">
@@ -39,7 +38,7 @@ export const About: React.FC = () => {
               ].map((icon) => (
                 <div
                   key={icon}
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-content2 text-default-600 hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors"
+                  className="flex items-center justify-center w-10 h-10 transition-colors rounded-full bg-content2 text-default-600 hover:bg-primary-100 dark:hover:bg-primary-900/30"
                 >
                   <Icon icon={icon} width={20} height={20} />
                 </div>
@@ -47,7 +46,7 @@ export const About: React.FC = () => {
             </div>
             <Card>
               <CardBody>
-                <h3 className="text-lg font-semibold mb-2">skills</h3>
+                <h3 className="mb-2 text-lg font-semibold">skills</h3>
                 <div className="space-y-3">
                   <SkillCategory
                     title="Frontend"
@@ -103,13 +102,13 @@ export const About: React.FC = () => {
             >
               <Card>
                 <CardBody className="p-6">
-                  <h2 className="text-2xl font-bold mb-4">
+                  <h2 className="mb-4 text-2xl font-bold">
                     Olá, meu nome é Leonardo Faustino
                   </h2>
-                  <p className="text-default-600 mb-4">{pph1}</p>
-                  <p className="text-default-600 mb-4">{pph2}</p>
-                  <p className="text-default-600 mb-4">{pph3}</p>
-                  <p className="text-default-600 mb-4">{pph4}</p>
+                  <p className="mb-4 text-default-600">{pph1}</p>
+                  <p className="mb-4 text-default-600">{pph2}</p>
+                  <p className="mb-4 text-default-600">{pph3}</p>
+                  <p className="mb-4 text-default-600">{pph4}</p>
                 </CardBody>
               </Card>
             </Tab>
@@ -127,22 +126,22 @@ export const About: React.FC = () => {
                   <motion.div key={edu.id} variants={item}>
                     <Card>
                       <CardBody className="p-6">
-                        <div className="flex flex-col md:flex-row gap-4">
+                        <div className="flex flex-col gap-4 md:flex-row">
                           <div className="flex-shrink-0">
-                            <div className="w-16 h-16 flex items-center justify-center bg-content2 rounded-lg">
+                            <div className="flex items-center justify-center w-16 h-16 rounded-lg bg-content2">
                               <Icon icon={edu.logo} width={40} height={40} />
                             </div>
                           </div>
                           <div className="flex-row">
-                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                            <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
                               <h3 className="text-xl font-semibold">
                                 {edu.institution}
                               </h3>
-                              <div className="text-default-500 text-sm">
+                              <div className="text-sm text-default-500">
                                 {edu.startDate} - {edu.endDate}
                               </div>
                             </div>
-                            <div className="text-primary font-medium mb-2">
+                            <div className="mb-2 font-medium text-primary">
                               {edu.degree} in {edu.field}
                             </div>
                             <p className="text-default-600">
@@ -170,28 +169,28 @@ export const About: React.FC = () => {
                   <motion.div key={job.id} variants={item}>
                     <Card>
                       <CardBody className="p-6">
-                        <div className="flex flex-col md:flex-row gap-4">
+                        <div className="flex flex-col gap-4 md:flex-row">
                           <div className="flex-shrink-0">
-                            <div className="w-16 h-16 flex items-center justify-center bg-content2 rounded-lg">
+                            <div className="flex items-center justify-center w-16 h-16 rounded-lg bg-content2">
                               <Icon icon={job.logo} width={40} height={40} />
                             </div>
                           </div>
                           <div className="flex-grow">
-                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                            <div className="flex flex-col justify-between gap-2 md:flex-row md:items-center">
                               <h3 className="text-xl font-semibold">
                                 {job.company}
                               </h3>
-                              <div className="text-default-500 text-sm">
+                              <div className="text-sm text-default-500">
                                 {job.startDate} - {job.endDate || "Presente"}
                               </div>
                             </div>
-                            <div className="text-primary font-medium mb-3">
+                            <div className="mb-3 font-medium text-primary">
                               {job.position}
                             </div>
-                            <h4 className="text-sm font-semibold text-default-700 mb-2">
+                            <h4 className="mb-2 text-sm font-semibold text-default-700">
                               Responsabilidades
                             </h4>
-                            <ul className="list-disc list-inside text-default-600 mb-4 space-y-1">
+                            <ul className="mb-4 space-y-1 list-disc list-inside text-default-600">
                               {job.responsibilities.map((resp, index) => (
                                 <li key={index} className="text-default-600">
                                   {resp}
@@ -203,7 +202,7 @@ export const About: React.FC = () => {
                               {job.technologies.map((tech) => (
                                 <div
                                   key={tech}
-                                  className="text-xs px-2 py-1 bg-content2 rounded-full text-default-700"
+                                  className="px-2 py-1 text-xs rounded-full bg-content2 text-default-700"
                                 >
                                   {tech}
                                 </div>
@@ -239,7 +238,7 @@ const SkillCategory: React.FC<SkillCategoryProps> = ({
         {skills.map((skill) => (
           <div
             key={skill}
-            className="text-xs px-2 py-1 bg-content2 rounded-full text-default-700 dark:bg-primary-900/15"
+            className="px-2 py-1 text-xs rounded-full bg-content2 text-default-700 dark:bg-primary-900/15"
           >
             {skill}
           </div>

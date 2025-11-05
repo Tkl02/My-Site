@@ -20,9 +20,9 @@ export const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="bg-content1 py-8 border-t border-divider">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+    <footer className="py-8 border-t bg-content1 border-divider">
+      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
           <div className="flex items-center gap-2">
             <Icon
               icon="lucide:code"
@@ -30,7 +30,9 @@ export const Footer: React.FC = () => {
               height={20}
               className="text-primary"
             />
-            <span className="font-semibold text-foreground">Portifolio</span>
+            <a href="/dashboard">
+              <span className="font-semibold text-foreground">Portifolio</span>
+            </a>
           </div>
           <div className="flex gap-6">
             {socialLinks.map((link) => (
@@ -38,16 +40,15 @@ export const Footer: React.FC = () => {
                 key={link.name}
                 href={link.url}
                 isExternal
-                className="text-default-600 hover:text-primary transition-colors"
+                className="transition-colors text-default-600 hover:text-primary"
                 aria-label={link.name}
               >
                 <Icon icon={link.icon} width={20} height={20} />
               </Link>
             ))}
           </div>
-          <div className="text-default-500 text-sm">
+          <div className="text-sm text-default-500">
             &copy; {currentYear} Leonardo Faustino. All rights reserved.
-
           </div>
         </div>
       </div>

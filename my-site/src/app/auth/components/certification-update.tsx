@@ -7,7 +7,6 @@ import {
   ModalFooter,
   Button,
   Input,
-  Textarea,
   Select,
   SelectItem,
   Spinner,
@@ -21,13 +20,13 @@ interface UpdateCertificationDialogProps {
 }
 
 interface Certification {
-  id: string;
+  id: number;
   title: string;
-  issuer: string;
+  issues: string;
   date: string;
-  description?: string;
-  imageUrl?: string;
-  credentialUrl?: string;
+  skills: string[];
+  logo: string;
+  credentialId: string;
 }
 
 const UpdateCertificationDialog = ({
@@ -36,13 +35,14 @@ const UpdateCertificationDialog = ({
 }: UpdateCertificationDialogProps) => {
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [selectedCertId, setSelectedCertId] = useState<string>("");
+
   const [formData, setFormData] = useState({
     title: "",
-    issuer: "",
+    issues: "",
     date: "",
-    description: "",
-    imageUrl: "",
-    credentialUrl: "",
+    skills: "",
+    logo: "",
+    credentialId: "",
   });
   const [loadingCerts, setLoadingCerts] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -57,11 +57,12 @@ const UpdateCertificationDialog = ({
 
   const fetchCertifications = async () => {
     setLoadingCerts(true);
+    setError("");
     try {
       const response = await api.get("/certifications");
       setCertifications(response.data);
     } catch (err: any) {
-      setError("Erro ao carregar certificações");
+      setError(err.response?.data?.error || "Erro ao carregar certificações");
     } finally {
       setLoadingCerts(false);
     }
@@ -69,15 +70,20 @@ const UpdateCertificationDialog = ({
 
   const handleCertSelect = (certId: string) => {
     setSelectedCertId(certId);
-    const cert = certifications.find((c) => c.id === certId);
+    const cert = certifications.find((c) => String(c.id) === certId);
+
     if (cert) {
+      const formattedDate = cert.date
+        ? new Date(cert.date).toISOString().split("T")[0]
+        : "";
+
       setFormData({
         title: cert.title,
-        issuer: cert.issuer,
-        date: cert.date,
-        description: cert.description || "",
-        imageUrl: cert.imageUrl || "",
-        credentialUrl: cert.credentialUrl || "",
+        issues: cert.issues,
+        date: formattedDate,
+        skills: cert.skills?.join(", ") || "",
+        logo: cert.logo || "",
+        credentialId: cert.credentialId || "",
       });
     }
     setError("");
@@ -98,8 +104,7 @@ const UpdateCertificationDialog = ({
       setError("Selecione uma certificação");
       return;
     }
-
-    if (!formData.title || !formData.issuer || !formData.date) {
+    if (!formData.title || !formData.issues || !formData.date) {
       setError("Título, emissor e data são obrigatórios");
       return;
     }
@@ -109,14 +114,29 @@ const UpdateCertificationDialog = ({
     setSuccess("");
 
     try {
-      await api.put(`/certifications/${selectedCertId}`, formData);
+      const skillsArray = formData.skills
+        .split(",")
+        .map((skill) => skill.trim())
+        .filter((skill) => skill !== "");
+
+      const certificationData = {
+        title: formData.title,
+        issues: formData.issues,
+        date: new Date(formData.date),
+        skills: skillsArray,
+        logo: formData.logo,
+        credentialId: formData.credentialId,
+      };
+
+      await api.put(`/certifications/${selectedCertId}`, certificationData);
 
       setSuccess("Certificação atualizada com sucesso!");
+      fetchCertifications();
       setTimeout(() => {
         handleClose();
       }, 1500);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Erro ao atualizar certificação");
+      setError(err.response?.data?.error || "Erro ao atualizar certificação");
     } finally {
       setLoading(false);
     }
@@ -126,11 +146,11 @@ const UpdateCertificationDialog = ({
     setSelectedCertId("");
     setFormData({
       title: "",
-      issuer: "",
+      issues: "",
       date: "",
-      description: "",
-      imageUrl: "",
-      credentialUrl: "",
+      skills: "",
+      logo: "",
+      credentialId: "",
     });
     setError("");
     setSuccess("");
@@ -147,7 +167,7 @@ const UpdateCertificationDialog = ({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex gap-2 items-center">
+            <ModalHeader className="flex items-center gap-2">
               <FileCheck size={24} className="text-primary" />
               <span>Atualizar Certificação</span>
             </ModalHeader>
@@ -170,7 +190,9 @@ const UpdateCertificationDialog = ({
                       variant="bordered"
                     >
                       {certifications.map((cert) => (
-                        <SelectItem key={cert.id}>{cert.title}</SelectItem>
+                        <SelectItem key={String(cert.id)}>
+                          {cert.title}
+                        </SelectItem>
                       ))}
                     </Select>
 
@@ -178,59 +200,50 @@ const UpdateCertificationDialog = ({
                       <>
                         <Input
                           label="Título da Certificação"
-                          placeholder="Nome da certificação"
                           name="title"
                           value={formData.title}
                           onChange={handleChange}
-                          isRequired
                           variant="bordered"
                         />
 
                         <Input
                           label="Emissor"
-                          placeholder="Instituição que emitiu"
-                          name="issuer"
-                          value={formData.issuer}
+                          name="issues"
+                          value={formData.issues}
                           onChange={handleChange}
-                          isRequired
                           variant="bordered"
                         />
 
                         <Input
                           label="Data de Emissão"
-                          placeholder="DD/MM/YYYY"
                           name="date"
                           type="date"
                           value={formData.date}
                           onChange={handleChange}
-                          isRequired
                           variant="bordered"
-                        />
-
-                        <Textarea
-                          label="Descrição"
-                          placeholder="Descreva a certificação..."
-                          name="description"
-                          value={formData.description}
-                          onChange={handleChange}
-                          variant="bordered"
-                          minRows={3}
                         />
 
                         <Input
-                          label="URL da Imagem"
-                          placeholder="https://example.com/certificate.jpg"
-                          name="imageUrl"
-                          value={formData.imageUrl}
+                          label="Habilidades"
+                          placeholder="React, Node.js (separadas por vírgula)"
+                          name="skills"
+                          value={formData.skills}
                           onChange={handleChange}
                           variant="bordered"
                         />
 
                         <Input
-                          label="URL da Credencial"
-                          placeholder="https://credencial.com/verify/123456"
-                          name="credentialUrl"
-                          value={formData.credentialUrl}
+                          label="URL do Logo"
+                          name="logo"
+                          value={formData.logo}
+                          onChange={handleChange}
+                          variant="bordered"
+                        />
+
+                        <Input
+                          label="ID/URL da Credencial"
+                          name="credentialId"
+                          value={formData.credentialId}
                           onChange={handleChange}
                           variant="bordered"
                         />
@@ -240,13 +253,13 @@ const UpdateCertificationDialog = ({
                 )}
 
                 {error && (
-                  <div className="bg-danger-50 text-danger p-3 rounded-lg text-sm">
+                  <div className="p-3 text-sm rounded-lg bg-danger-50 text-danger">
                     {error}
                   </div>
                 )}
 
                 {success && (
-                  <div className="bg-success-50 text-success p-3 rounded-lg text-sm">
+                  <div className="p-3 text-sm rounded-lg bg-success-50 text-success">
                     {success}
                   </div>
                 )}

@@ -1,3 +1,5 @@
+// src/components/admin/UploadImageDialog.tsx
+
 import { useState } from "react";
 import {
   Modal,
@@ -6,7 +8,6 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  Input,
 } from "@heroui/react";
 import { Upload, Image as ImageIcon } from "lucide-react";
 import { api } from "../../lib/api";
@@ -33,6 +34,7 @@ const UploadImageDialog = ({ open, onOpenChange }: UploadImageDialogProps) => {
       };
       reader.readAsDataURL(selectedFile);
       setError("");
+      setSuccess("");
     }
   };
 
@@ -48,20 +50,25 @@ const UploadImageDialog = ({ open, onOpenChange }: UploadImageDialogProps) => {
 
     try {
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("file", file);
 
-      await api.post("/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await api.post("/upload", formData);
 
-      setSuccess("Imagem enviada com sucesso!");
-      setTimeout(() => {
-        handleClose();
-      }, 1500);
+      const { imageUrl } = response.data;
+
+      navigator.clipboard.writeText(imageUrl);
+      setSuccess(
+        `Upload com sucesso! A URL da imagem foi copiada para sua área de transferência: ${imageUrl}`
+      );
+
+      setFile(null);
+      setPreview("");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Erro ao enviar imagem");
+      setError(
+        err.response?.data?.error ||
+          err.response?.data?.message ||
+          "Erro ao enviar imagem"
+      );
     } finally {
       setLoading(false);
     }
@@ -76,23 +83,24 @@ const UploadImageDialog = ({ open, onOpenChange }: UploadImageDialogProps) => {
   };
 
   return (
-    <Modal isOpen={open} onOpenChange={onOpenChange} size="2xl">
+    <Modal isOpen={open} onOpenChange={handleClose} size="2xl">
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex gap-2 items-center">
+            <ModalHeader className="flex items-center gap-2">
               <Upload size={24} className="text-primary" />
               <span>Upload de Imagem</span>
             </ModalHeader>
             <ModalBody>
               <div className="space-y-4">
-                <div className="border-2 border-dashed border-default-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer">
+                <div className="p-8 text-center transition-colors border-2 border-dashed rounded-lg cursor-pointer border-default-300 hover:border-primary">
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleFileChange}
                     className="hidden"
                     id="file-upload"
+                    disabled={loading}
                   />
                   <label htmlFor="file-upload" className="cursor-pointer">
                     {preview ? (
@@ -100,7 +108,7 @@ const UploadImageDialog = ({ open, onOpenChange }: UploadImageDialogProps) => {
                         <img
                           src={preview}
                           alt="Preview"
-                          className="max-h-64 mx-auto rounded-lg object-cover"
+                          className="object-cover mx-auto rounded-lg max-h-64"
                         />
                         <p className="text-sm text-default-600">
                           Clique para escolher outra imagem
@@ -125,8 +133,8 @@ const UploadImageDialog = ({ open, onOpenChange }: UploadImageDialogProps) => {
                   </label>
                 </div>
 
-                {file && (
-                  <div className="text-sm text-default-600 bg-default-100 p-3 rounded-lg">
+                {file && !success && (
+                  <div className="p-3 text-sm rounded-lg text-default-600 bg-default-100">
                     <p>
                       <strong>Arquivo:</strong> {file.name}
                     </p>
@@ -138,13 +146,13 @@ const UploadImageDialog = ({ open, onOpenChange }: UploadImageDialogProps) => {
                 )}
 
                 {error && (
-                  <div className="bg-danger-50 text-danger p-3 rounded-lg text-sm">
+                  <div className="p-3 text-sm rounded-lg bg-danger-50 text-danger">
                     {error}
                   </div>
                 )}
 
                 {success && (
-                  <div className="bg-success-50 text-success p-3 rounded-lg text-sm">
+                  <div className="p-3 text-sm rounded-lg bg-success-50 text-success">
                     {success}
                   </div>
                 )}
@@ -152,13 +160,13 @@ const UploadImageDialog = ({ open, onOpenChange }: UploadImageDialogProps) => {
             </ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={handleClose}>
-                Cancelar
+                {success ? "Fechar" : "Cancelar"}
               </Button>
               <Button
                 color="primary"
                 onPress={handleUpload}
                 isLoading={loading}
-                isDisabled={!file || loading}
+                isDisabled={!file || loading || !!success}
               >
                 Upload
               </Button>

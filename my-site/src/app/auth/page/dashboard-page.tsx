@@ -17,6 +17,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../config/context/AuthContext";
 
 // Dialogs
 import UploadImageDialog from "../../auth/components/uploadimage";
@@ -29,11 +30,12 @@ import DeleteCertificationDialog from "../../auth/components/certification-delet
 
 export const Dashboard = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [openDialog, setOpenDialog] = useState<string | null>(null);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
+    logout();
+    navigate("/logarusuario");
   };
 
   const adminActions = [
@@ -151,23 +153,13 @@ export const Dashboard = () => {
                     {action.description}
                   </p>
                 </CardBody>
-                <CardFooter className="pt-2">
-                  <Button
-                    fullWidth
-                    color={isDanger ? "danger" : "primary"}
-                    variant={isDanger ? "flat" : "solid"}
-                    size="sm"
-                  >
-                    {isDanger ? "Remover" : "Executar"}
-                  </Button>
-                </CardFooter>
+                <CardFooter className="pt-2"></CardFooter>
               </Card>
             );
           })}
         </div>
       </div>
 
-      {/* Dialogs */}
       <UploadImageDialog
         open={openDialog === "upload-image"}
         onOpenChange={(open) => setOpenDialog(open ? "upload-image" : null)}

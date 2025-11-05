@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Modal,
   ModalContent,
@@ -8,6 +8,7 @@ import {
   Button,
   Input,
   Textarea,
+  Checkbox,
 } from "@heroui/react";
 import { FolderPlus } from "lucide-react";
 import { api } from "../../lib/api";
@@ -24,20 +25,45 @@ const CreateProjectDialog = ({
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    imageUrl: "",
-    projectUrl: "",
+    image: "",
+    repoUrl: "",
     technologies: "",
+    featured: false,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  useEffect(() => {
+    if (open) {
+      navigator.clipboard
+        .readText()
+        .then((text) => {
+          if (text && (text.startsWith("http") || text.startsWith("https:"))) {
+            setFormData((prevData) => ({
+              ...prevData,
+              image: text,
+            }));
+          }
+        })
+        .catch((err) => {
+          console.warn("Falha ao ler o clipboard (permissão?):", err);
+        });
+    }
+  }, [open]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
+    const target = e.target as HTMLInputElement | HTMLTextAreaElement;
+    const { name, value, type } = target;
+
+    const isCheckbox =
+      type === "checkbox" && target instanceof HTMLInputElement;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: isCheckbox ? (target as HTMLInputElement).checked : value,
     });
     setError("");
   };
@@ -53,12 +79,18 @@ const CreateProjectDialog = ({
     setSuccess("");
 
     try {
+      const technologiesArray = formData.technologies
+        .split(",")
+        .map((tech) => tech.trim())
+        .filter((tech) => tech !== "");
+
       const projectData = {
-        ...formData,
-        technologies: formData.technologies
-          .split(",")
-          .map((tech) => tech.trim())
-          .filter((tech) => tech !== ""),
+        title: formData.title,
+        description: formData.description,
+        technologies: technologiesArray,
+        image: formData.image,
+        repoUrl: formData.repoUrl,
+        featured: formData.featured,
       };
 
       await api.post("/projects", projectData);
@@ -68,7 +100,11 @@ const CreateProjectDialog = ({
         handleClose();
       }, 1500);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Erro ao criar projeto");
+      setError(
+        err.response?.data?.error ||
+          err.response?.data?.message ||
+          "Erro ao criar projeto"
+      );
     } finally {
       setLoading(false);
     }
@@ -78,9 +114,10 @@ const CreateProjectDialog = ({
     setFormData({
       title: "",
       description: "",
-      imageUrl: "",
-      projectUrl: "",
+      image: "",
+      repoUrl: "",
       technologies: "",
+      featured: false,
     });
     setError("");
     setSuccess("");
@@ -97,7 +134,7 @@ const CreateProjectDialog = ({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex gap-2 items-center">
+            <ModalHeader className="flex items-center gap-2">
               <FolderPlus size={24} className="text-primary" />
               <span>Criar Novo Projeto</span>
             </ModalHeader>
@@ -126,19 +163,21 @@ const CreateProjectDialog = ({
 
                 <Input
                   label="URL da Imagem"
-                  placeholder="https://example.com/image.jpg"
-                  name="imageUrl"
-                  value={formData.imageUrl}
+                  placeholder="Cole a URL ou faça upload (ela será colada automaticamente)"
+                  name="image"
+                  value={formData.image}
                   onChange={handleChange}
+                  isRequired
                   variant="bordered"
                 />
 
                 <Input
                   label="URL do Projeto"
                   placeholder="https://github.com/usuario/projeto"
-                  name="projectUrl"
-                  value={formData.projectUrl}
+                  name="repoUrl"
+                  value={formData.repoUrl}
                   onChange={handleChange}
+                  isRequired
                   variant="bordered"
                 />
 
@@ -148,27 +187,34 @@ const CreateProjectDialog = ({
                   name="technologies"
                   value={formData.technologies}
                   onChange={handleChange}
+                  isRequired
                   variant="bordered"
-                  description="Separe as tecnologias por vírgula"
                 />
 
+                <Checkbox
+                  name="featured"
+                  isSelected={formData.featured}
+                  onValueChange={(checked) =>
+                    setFormData({ ...formData, featured: checked })
+                  }
+                >
+                  Marcar como projeto destaque
+                </Checkbox>
+
                 {error && (
-                  <div className="bg-danger-50 text-danger p-3 rounded-lg text-sm">
+                  <div className="p-3 text-sm rounded-lg bg-danger-50 text-danger">
                     {error}
                   </div>
                 )}
 
                 {success && (
-                  <div className="bg-success-50 text-success p-3 rounded-lg text-sm">
+                  <div className="p-3 text-sm rounded-lg bg-success-50 text-success">
                     {success}
                   </div>
                 )}
               </div>
             </ModalBody>
             <ModalFooter>
-              <Button color="danger" variant="light" onPress={handleClose}>
-                Cancelar
-              </Button>
               <Button
                 color="primary"
                 onPress={handleSubmit}

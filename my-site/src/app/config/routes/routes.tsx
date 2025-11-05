@@ -7,6 +7,7 @@ import { Projects } from "../../pages/project-page";
 import { CertificationsPage } from "../../pages/certification-page";
 import { Auth } from "../../auth/page/login-page";
 import { Dashboard } from "../../auth/page/dashboard-page";
+import { ProtectedRoute } from "../../components/protectedroute";
 
 export const Rotas: React.FC = () => {
   return (
@@ -17,7 +18,9 @@ export const Rotas: React.FC = () => {
       <Route path="/projects" element={<Projects />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/logarusuario" element={<Auth />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Route>
     </Routes>
   );
 };

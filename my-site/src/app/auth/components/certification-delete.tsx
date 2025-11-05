@@ -21,13 +21,13 @@ interface DeleteCertificationDialogProps {
 }
 
 interface Certification {
-  id: string;
+  id: number;
   title: string;
-  issuer: string;
+  issues: string;
   date: string;
-  description?: string;
-  imageUrl?: string;
-  credentialUrl?: string;
+  skills: string[];
+  logo: string;
+  credentialId: string;
 }
 
 const DeleteCertificationDialog = ({
@@ -50,11 +50,12 @@ const DeleteCertificationDialog = ({
 
   const fetchCertifications = async () => {
     setLoadingCerts(true);
+    setError("");
     try {
       const response = await api.get("/certifications");
       setCertifications(response.data);
     } catch (err: any) {
-      setError("Erro ao carregar certificações");
+      setError(err.response?.data?.error || "Erro ao carregar certificações");
     } finally {
       setLoadingCerts(false);
     }
@@ -62,7 +63,7 @@ const DeleteCertificationDialog = ({
 
   const handleCertSelect = (certId: string) => {
     setSelectedCertId(certId);
-    const cert = certifications.find((c) => c.id === certId);
+    const cert = certifications.find((c) => String(c.id) === certId);
     setSelectedCert(cert || null);
     setError("");
   };
@@ -81,11 +82,12 @@ const DeleteCertificationDialog = ({
       await api.delete(`/certifications/${selectedCertId}`);
 
       setSuccess("Certificação deletada com sucesso!");
+      fetchCertifications();
       setTimeout(() => {
         handleClose();
       }, 1500);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Erro ao deletar certificação");
+      setError(err.response?.data?.error || "Erro ao deletar certificação");
     } finally {
       setLoading(false);
     }
@@ -104,7 +106,7 @@ const DeleteCertificationDialog = ({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex gap-2 items-center">
+            <ModalHeader className="flex items-center gap-2">
               <Trash2 size={24} className="text-danger" />
               <span>Deletar Certificação</span>
             </ModalHeader>
@@ -112,10 +114,10 @@ const DeleteCertificationDialog = ({
               <div className="space-y-4">
                 <Card className="bg-danger-50 dark:bg-danger-100/10 border-danger">
                   <CardBody>
-                    <div className="flex gap-3 items-start">
+                    <div className="flex items-start gap-3">
                       <AlertTriangle
                         size={24}
-                        className="text-danger flex-shrink-0"
+                        className="flex-shrink-0 text-danger"
                       />
                       <div className="space-y-1">
                         <p className="text-sm font-semibold text-danger">
@@ -147,30 +149,35 @@ const DeleteCertificationDialog = ({
                       variant="bordered"
                     >
                       {certifications.map((cert) => (
-                        <SelectItem key={cert.id}>{cert.title}</SelectItem>
+                        <SelectItem key={String(cert.id)}>
+                          {cert.title}
+                        </SelectItem>
                       ))}
                     </Select>
 
                     {selectedCert && (
                       <Card>
                         <CardBody className="space-y-2">
-                          <h4 className="font-semibold text-lg">
+                          <h4 className="text-lg font-semibold">
                             {selectedCert.title}
                           </h4>
                           <p className="text-sm text-default-600">
-                            <strong>Emissor:</strong> {selectedCert.issuer}
+                            <strong>Emissor:</strong> {selectedCert.issues}
                           </p>
                           <p className="text-sm text-default-600">
                             <strong>Data:</strong>{" "}
                             {new Date(selectedCert.date).toLocaleDateString(
-                              "pt-BR"
+                              "pt-BR",
+                              { timeZone: "UTC" }
                             )}
                           </p>
-                          {selectedCert.description && (
-                            <p className="text-sm text-default-600">
-                              {selectedCert.description}
-                            </p>
-                          )}
+                          {selectedCert.skills &&
+                            selectedCert.skills.length > 0 && (
+                              <p className="text-sm text-default-600">
+                                <strong>Habilidades:</strong>{" "}
+                                {selectedCert.skills.join(", ")}
+                              </p>
+                            )}
                         </CardBody>
                       </Card>
                     )}
@@ -178,13 +185,13 @@ const DeleteCertificationDialog = ({
                 )}
 
                 {error && (
-                  <div className="bg-danger-50 text-danger p-3 rounded-lg text-sm">
+                  <div className="p-3 text-sm rounded-lg bg-danger-50 text-danger">
                     {error}
                   </div>
                 )}
 
                 {success && (
-                  <div className="bg-success-50 text-success p-3 rounded-lg text-sm">
+                  <div className="p-3 text-sm rounded-lg bg-success-50 text-success">
                     {success}
                   </div>
                 )}

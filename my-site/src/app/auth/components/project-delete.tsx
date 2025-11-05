@@ -21,12 +21,13 @@ interface DeleteProjectDialogProps {
 }
 
 interface Project {
-  id: string;
+  id: number;
   title: string;
   description: string;
-  imageUrl?: string;
-  projectUrl?: string;
-  technologies?: string[];
+  image: string;
+  repoUrl: string;
+  technologies: string[];
+  featured: boolean;
 }
 
 const DeleteProjectDialog = ({
@@ -49,11 +50,12 @@ const DeleteProjectDialog = ({
 
   const fetchProjects = async () => {
     setLoadingProjects(true);
+    setError("");
     try {
       const response = await api.get("/projects");
       setProjects(response.data);
     } catch (err: any) {
-      setError("Erro ao carregar projetos");
+      setError(err.response?.data?.error || "Erro ao carregar projetos");
     } finally {
       setLoadingProjects(false);
     }
@@ -61,7 +63,7 @@ const DeleteProjectDialog = ({
 
   const handleProjectSelect = (projectId: string) => {
     setSelectedProjectId(projectId);
-    const project = projects.find((p) => p.id === projectId);
+    const project = projects.find((p) => String(p.id) === projectId);
     setSelectedProject(project || null);
     setError("");
   };
@@ -80,11 +82,12 @@ const DeleteProjectDialog = ({
       await api.delete(`/projects/${selectedProjectId}`);
 
       setSuccess("Projeto deletado com sucesso!");
+      fetchProjects();
       setTimeout(() => {
         handleClose();
       }, 1500);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Erro ao deletar projeto");
+      setError(err.response?.data?.error || "Erro ao deletar projeto");
     } finally {
       setLoading(false);
     }
@@ -103,7 +106,7 @@ const DeleteProjectDialog = ({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="flex gap-2 items-center">
+            <ModalHeader className="flex items-center gap-2">
               <Trash2 size={24} className="text-danger" />
               <span>Deletar Projeto</span>
             </ModalHeader>
@@ -111,10 +114,10 @@ const DeleteProjectDialog = ({
               <div className="space-y-4">
                 <Card className="bg-danger-50 dark:bg-danger-100/10 border-danger">
                   <CardBody>
-                    <div className="flex gap-3 items-start">
+                    <div className="flex items-start gap-3">
                       <AlertTriangle
                         size={24}
-                        className="text-danger flex-shrink-0"
+                        className="flex-shrink-0 text-danger"
                       />
                       <div className="space-y-1">
                         <p className="text-sm font-semibold text-danger">
@@ -148,7 +151,7 @@ const DeleteProjectDialog = ({
                       variant="bordered"
                     >
                       {projects.map((project) => (
-                        <SelectItem key={project.id}>
+                        <SelectItem key={String(project.id)}>
                           {project.title}
                         </SelectItem>
                       ))}
@@ -157,7 +160,7 @@ const DeleteProjectDialog = ({
                     {selectedProject && (
                       <Card>
                         <CardBody className="space-y-2">
-                          <h4 className="font-semibold text-lg">
+                          <h4 className="text-lg font-semibold">
                             {selectedProject.title}
                           </h4>
                           <p className="text-sm text-default-600">
@@ -170,7 +173,7 @@ const DeleteProjectDialog = ({
                                   (tech, index) => (
                                     <span
                                       key={index}
-                                      className="px-2 py-1 bg-primary-50 dark:bg-primary-100/10 text-primary text-xs rounded-full"
+                                      className="px-2 py-1 text-xs rounded-full bg-primary-50 dark:bg-primary-100/10 text-primary"
                                     >
                                       {tech}
                                     </span>
@@ -185,14 +188,14 @@ const DeleteProjectDialog = ({
                 )}
 
                 {error && (
-                  <div className="bg-danger-50 text-danger p-3 rounded-lg text-sm">
+                  <div className="p-3 text-sm rounded-lg bg-danger-50 text-danger">
                     {error}
                   </div>
                 )}
 
                 {success && (
-                  <div className="bg-success-50 text-success p-3 rounded-lg text-sm">
-                    {success}
+                  <div className="p-3 text-sm rounded-lg bg-success-50 text-success">
+                    S {success}
                   </div>
                 )}
               </div>
