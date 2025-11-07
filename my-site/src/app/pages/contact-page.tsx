@@ -2,30 +2,56 @@ import React from "react";
 import { Card, CardBody, Input, Textarea, Button, Link } from "@heroui/react";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
-import { addToast } from "@heroui/react";
+import emailjs from "@emailjs/browser";
 
 export const Contact: React.FC = () => {
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [message, setMessage] = React.useState("");
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [submitStatus, setSubmitStatus] = React.useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus({ type: null, message: "" });
 
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      addToast({
-        title: "Message sent!",
-        description: "Thank you for your message. I'll get back to you soon.",
-        color: "success",
+    try {
+      const templateParams = {
+        from_name: name,
+        message: message,
+        from_email: email,
+      };
+
+      await emailjs.send(
+        "service_4afezz9",
+        "template_psaivfh",
+        templateParams,
+        "IvmaDC9Xs_5GhASnP"
+      );
+
+      setSubmitStatus({
+        type: "success",
+        message:
+          "Message sent! Thank you for your message. I'll get back to you soon.",
       });
+
       setName("");
       setEmail("");
       setMessage("");
-    }, 1500);
+    } catch (error) {
+      console.error("EmailJS Error:", error);
+      setSubmitStatus({
+        type: "error",
+        message:
+          "Failed to send message. Please try again or contact me directly via email.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -124,6 +150,31 @@ export const Contact: React.FC = () => {
                   minRows={5}
                   isRequired
                 />
+
+                {submitStatus.type && (
+                  <div
+                    className={`p-4 rounded-lg ${
+                      submitStatus.type === "success"
+                        ? "bg-success-50 text-success border border-success-200"
+                        : "bg-danger-50 text-danger border border-danger-200"
+                    }`}
+                  >
+                    <div className="flex items-start gap-2">
+                      <Icon
+                        icon={
+                          submitStatus.type === "success"
+                            ? "lucide:check-circle"
+                            : "lucide:alert-circle"
+                        }
+                        width={20}
+                        height={20}
+                        className="flex-shrink-0 mt-0.5"
+                      />
+                      <p className="text-sm">{submitStatus.message}</p>
+                    </div>
+                  </div>
+                )}
+
                 <Button
                   type="submit"
                   color="primary"

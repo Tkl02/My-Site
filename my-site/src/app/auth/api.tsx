@@ -1,10 +1,8 @@
 import axios from "axios";
-import dotenv from "dotenv";
-dotenv.config();
 
-const verceUrl = process.env.VERCEL_URL;
+const apiUrl = import.meta.env.VITE_VERCEL_URL;
 
 export const api = axios.create({
-  baseURL: `${verceUrl}/api`,
+  baseURL: `${apiUrl}/api`,
   withCredentials: true,
 });
